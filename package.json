@@ -1,0 +1,14 @@
+{
+  "name": "opencode-copilot-provider",
+  "version": "0.1.0",
+  "description": "Minimal GitHub Copilot auth/provider helper for OpenCode-style workflows.",
+  "type": "module",
+  "main": "./index.mjs",
+  "bin": {
+    "opencode-copilot-provider": "./index.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
