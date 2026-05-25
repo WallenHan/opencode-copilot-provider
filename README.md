@@ -2,9 +2,7 @@
 
 A minimal, configurable GitHub Copilot auth/provider helper.
 
-## Why this exists
-
-OpenCode's built-in Copilot flow hardcodes a client ID in the bundled plugin. This repo provides a tiny, separate implementation where the client ID can be changed without touching OpenCode itself.
+This repo provides a tiny, separate implementation of the GitHub Copilot auth flow, where the client ID can be easily changed.
 
 ## Features
 
@@ -14,41 +12,66 @@ OpenCode's built-in Copilot flow hardcodes a client ID in the bundled plugin. Th
 - Copilot models fetch
 - Configurable `client_id`
 
-## Usage
+## Quick Start
 
-### Login
+1.  **Clone the repository:**
 
-```bash
-node index.mjs auth --domain github.com --client-id Ov23li8tweQw6odWQebz
-```
+    ```bash
+    git clone https://github.com/WallenHan/opencode-copilot-provider.git
+    cd opencode-copilot-provider
+    ```
 
-### Print device code JSON without polling
+2.  **Run the authentication:**
 
-```bash
-node index.mjs login --domain github.com
-```
+    This command will guide you through the GitHub device login.
 
-### Fetch Copilot models
+    ```bash
+    node index.mjs auth
+    ```
 
-```bash
-node index.mjs models --domain github.com --token <access_token>
-```
+    You will see a URL and a code. Open the URL in your browser and enter the code to authorize the application.
 
-## Override client ID
+3.  **Use a custom Client ID:**
 
-Set one of:
+    You can override the default client ID in two ways:
 
-```bash
-export OPENCODE_COPILOT_CLIENT_ID='your-client-id'
-```
+    **Option A: Command-line argument**
 
-or pass:
+    ```bash
+    node index.mjs auth --client-id <your-client-id>
+    ```
 
-```bash
---client-id your-client-id
-```
+    **Option B: Environment variable**
 
-## Notes
+    ```bash
+    export OPENCODE_COPILOT_CLIENT_ID=<your-client-id>
+    node index.mjs auth
+    ```
 
-- Node.js 18+ required.
-- This is the simplest possible version; it is intentionally not a full OpenCode integration yet.
+## Other Commands
+
+-   **Get device code without waiting:**
+
+    This will print the device code JSON and exit, allowing you to handle the polling yourself.
+
+    ```bash
+    node index.mjs login
+    ```
+
+-   **Fetch available Copilot models:**
+
+    You need a valid `refresh_token` from the `auth` command to do this.
+
+    ```bash
+    # First, get a refresh token
+    # The output of `auth` command will contain a "refresh_token"
+    node index.mjs auth > auth_output.json
+    REFRESH_TOKEN=$(jq -r .refresh_token auth_output.json)
+
+    # Then, exchange it for a Copilot token and fetch models
+    # Note: This is a simplified example. The script does this internally.
+    # To fetch models, you need a short-lived bearer token, not the refresh token.
+    # The `auth` command gives you the final copilot token.
+    COPILOT_TOKEN=$(jq -r .copilot_token auth_output.json)
+    node index.mjs models --token $COPILOT_TOKEN
+    ```
