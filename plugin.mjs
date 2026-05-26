@@ -62,13 +62,12 @@ export const CustomCopilotProviderPlugin = async ({ client }) => {
           name: 'Custom Copilot Device Login',
           type: 'oauth',
           // This function runs when the user selects this method in /connect
-          authorize: async (inputs, {-back}) => {
+          authorize: async (inputs, { back }) => {
             try {
               // Start the device flow using our logic
-              const device = await authorize({
-                domain: customDomain,
-                clientId: customClientId,
-              });
+            const device = await authorize({
+              domain: customDomain,
+            });
 
               // Return the auth data to OpenCode to be stored
               return {
